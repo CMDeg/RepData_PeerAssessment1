@@ -51,10 +51,17 @@ data.mean<-aggregate(activity$steps ~activity$interval, FUN="mean")
 names(data.mean)<-c("interval","steps")
 str(data.mean)
 ```
-Use the lattice library for making a time series plot
+
+Convert the variable interval to time of the day.
+```{r}
+data.mean$timeOfDay <- strptime(sprintf("%04d", as.numeric(as.character(data.mean$interval))), "%H%M")
+```
+
+
+Making a time series plot.
+
 ```{r tsplot}
-library(lattice)
-xyplot(data.mean$steps~data.mean$interval, type = "l", xlab="interval", ylab="Mean number of steps", main= "Time series plot: Mean number of steps per interval")
+plot(data.mean$timeOfDay, data.mean$steps, type = "l", xlab="interval", ylab="Mean number of steps", main= "Time series plot: Mean number of steps per interval")
 ```
 
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
@@ -63,6 +70,7 @@ Find out the maximum number of steps:
 ```{r}
 max(data.mean$steps)
 ```
+
 Create a subset to figure out the interval belonging to the max value:
 ```{r}
 data.max <- subset(data.mean[data.mean$steps>206,])
@@ -156,6 +164,7 @@ activity.imp$day<-as.factor(activity.imp$day)
 ```{r}
 weekday.mean<-aggregate(activity.imp$steps, by=list(activity.imp$interval, activity.imp$day), FUN="mean")
 names(weekday.mean)<-c("interval","day", "steps")
+library(lattice)
 xyplot(steps~interval|day, data=weekday.mean, type = "l", layout=c(1,2))
 ```
 

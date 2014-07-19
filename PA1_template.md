@@ -105,11 +105,19 @@ str(data.mean)
 ##  $ interval: Factor w/ 288 levels "0","5","10","15",..: 1 2 3 4 5 6 7 8 9 10 ...
 ##  $ steps   : num  1.717 0.3396 0.1321 0.1509 0.0755 ...
 ```
-Use the lattice library for making a time series plot
+
+Convert the variable interval to time of the day.
 
 ```r
-library(lattice)
-xyplot(data.mean$steps~data.mean$interval, type = "l", xlab="interval", ylab="Mean number of steps", main= "Time series plot: Mean number of steps per interval")
+data.mean$timeOfDay <- strptime(sprintf("%04d", as.numeric(as.character(data.mean$interval))), "%H%M")
+```
+
+
+Making a time series plot.
+
+
+```r
+plot(data.mean$timeOfDay, data.mean$steps, type = "l", xlab="interval", ylab="Mean number of steps", main= "Time series plot: Mean number of steps per interval")
 ```
 
 ![plot of chunk tsplot](./PA1_template_files/figure-html/tsplot.png) 
@@ -125,6 +133,7 @@ max(data.mean$steps)
 ```
 ## [1] 206.2
 ```
+
 Create a subset to figure out the interval belonging to the max value:
 
 ```r
@@ -133,8 +142,8 @@ data.max
 ```
 
 ```
-##     interval steps
-## 104      835 206.2
+##     interval steps           timeOfDay
+## 104      835 206.2 2014-07-19 08:35:00
 ```
 Answer: The interval 835 contains the maximum number of steps.
 
@@ -217,7 +226,7 @@ Plot a histogram:
 hist(imp.sum$steps, nclass=30, xlab="steps", main="Histogram of the total steps per day")
 ```
 
-![plot of chunk unnamed-chunk-11](./PA1_template_files/figure-html/unnamed-chunk-11.png) 
+![plot of chunk unnamed-chunk-12](./PA1_template_files/figure-html/unnamed-chunk-12.png) 
 Calculate mean and median number of steps
 
 ```r
@@ -265,8 +274,9 @@ activity.imp$day<-as.factor(activity.imp$day)
 ```r
 weekday.mean<-aggregate(activity.imp$steps, by=list(activity.imp$interval, activity.imp$day), FUN="mean")
 names(weekday.mean)<-c("interval","day", "steps")
+library(lattice)
 xyplot(steps~interval|day, data=weekday.mean, type = "l", layout=c(1,2))
 ```
 
-![plot of chunk unnamed-chunk-14](./PA1_template_files/figure-html/unnamed-chunk-14.png) 
+![plot of chunk unnamed-chunk-15](./PA1_template_files/figure-html/unnamed-chunk-15.png) 
 
